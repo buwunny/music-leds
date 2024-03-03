@@ -5,12 +5,12 @@ import serial
 import time
 import threading
 
-arduino = serial.Serial('COM5', 115200 , timeout=0.1) #rtscts=True)
+arduino = serial.Serial('COM3', baudrate=115200 , timeout=0.1) #rtscts=True)
 def to_arduino(x):
     arduino.write(bytes(x, 'utf-8'))
     # time.sleep(0.05)
     data = arduino.readline().decode('utf-8')
-    # print(data)
+    print(data)
     # if x in data:
     return data
     # else:
@@ -66,22 +66,33 @@ def update_arduino(stream):
         intensity = np.max(audio_data)
 
         # Apply the FFT to the audio data
-        # fft_data = np.fft.fft(audio_data)
-
+        fft_data = np.fft.fft(audio_data)
+    
         # Calculate the frequencies corresponding to the FFT bins
-        # frequencies = np.fft.fftfreq(len(fft_data), 1/RATE)
+        frequencies = np.fft.fftfreq(len(fft_data), 1/RATE)
 
-        # # Find the index of the maximum magnitude in the FFT data
-        # max_index = np.argmax(np.abs(fft_data))
+        # Find the index of the maximum magnitude in the FFT data
+        max_index = np.argmax(np.abs(fft_data))
 
-        # # Get the frequency corresponding to the maximum magnitude
-        # max_frequency = int(abs(frequencies[max_index]))
+        # Get the frequency corresponding to the maximum magnitude
+        max_frequency = int(abs(frequencies[max_index]))
 
+        color = max_frequency/100
+        # if max_frequency > 1500:
+        #     color = 1
+        # elif max_frequency > 500:
+        #     color = 2
+        # else:
+        #     color = 3
+
+        # print(max_frequency, color)
+        to_arduino(str(color))
         to_arduino(str(intensity))# + "|" + str(max_frequency))
         # Print the calculated frequency
         # print("Frequency:", max_frequency)
         # print("REVERSE" + str(max_frequency)[::-1])
-        # time.sleep(0.01)
+        time.sleep(0.05)
+
         # print(stream.get_time()
 
 

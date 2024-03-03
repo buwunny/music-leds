@@ -9,7 +9,8 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int piezo = A0;
 // int past = 0;
 
-CRGB color = CRGB::Red;
+float intensity;
+CRGB color;
 
 CRGB leds[NUM_LEDS];
 CRGB temp[NUM_LEDS];
@@ -26,8 +27,15 @@ void setup() {
 
 void loop() {
   while (!Serial.available());
-  float data = Serial.readString().toInt();
-  // int intensity;
+  String data = Serial.readString();
+  if (data.length() <= 3){
+    int c = data.toInt();
+    color = ColorFromPalette(RainbowColors_p, c);
+
+  }
+  else {
+    intensity = data.toInt();
+  }
   // int frequency;
   // for (int i = 0; i < data.length(); i++){
   //   int mid = data.indexOf("|");
@@ -51,8 +59,8 @@ void loop() {
   
   for (int i = 0; i <= NUM_LEDS; i++) {
         // Serial.print(i);
-    if (i <= data / 3000 * 10) {
-      leds[i] = CRGB::Red;
+    if (i <= intensity / 3000 * 10) {
+      leds[i] = color;
       // if (i % 2 == 0 ) {
       //   i = 19 - i;
       // }
